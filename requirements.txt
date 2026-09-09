@@ -1,0 +1,12 @@
+polars
+duckdb
+scipy
+scikit-learn
+
+typer
+
+pydantic
+
+plotly
+
+pytest
