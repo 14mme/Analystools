@@ -4,7 +4,7 @@ from analystools.cli.commands import dataset, project
 
 app = typer.Typer(
     name="analystools",
-    help="Local-first analytical workbench.",
+    help="Local analytical workbench.",
     no_args_is_help=True,
 )
 
