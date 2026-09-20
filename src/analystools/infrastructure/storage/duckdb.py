@@ -6,7 +6,10 @@ import duckdb
 class DuckDBStore:
     def __init__(self, path: Path) -> None:
         self.path = path
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
     def connect(self) -> duckdb.DuckDBPyConnection:
         return duckdb.connect(str(self.path))
@@ -25,11 +28,24 @@ class DuckDBStore:
             connection.execute(
                 f"""
                 CREATE OR REPLACE VIEW "{table_name}"
-                AS SELECT * FROM read_parquet(?)
+                AS SELECT *
+                FROM read_parquet(?)
                 """,
                 [str(parquet_path)],
             )
 
-    def query(self, sql: str):
+    def query(
+        self,
+        sql: str,
+    ) -> tuple[list[str], list[tuple]]:
         with self.connect() as connection:
-            return connection.execute(sql).fetchdf()
+            cursor = connection.execute(sql)
+
+            columns = [
+                item[0]
+                for item in cursor.description
+            ]
+
+            rows = cursor.fetchall()
+
+            return columns, rows

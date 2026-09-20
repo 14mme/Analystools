@@ -2,8 +2,10 @@ import typer
 
 from analystools.cli.commands import (
     dataset, 
+    metric,
     profile, 
-    project, 
+    project,
+    query, 
     validate
 )
 
@@ -21,13 +23,22 @@ dataset_app = typer.Typer(
     help="Dataset management commands."
 )
 
+metric_app = typer.Typer(
+    help="Metric management commands."
+)
+
 project_app.command("init")(project.init)
 
 dataset_app.command("add")(dataset.add)
 dataset_app.command("list")(dataset.list_command)
 
+metric_app.command("list")(metric.list_metrics)
+metric_app.command("show")(metric.show)
+metric_app.command("calculate")(metric.calculate)
+
 app.command("profile")(profile.profile)
 app.command("validate")(validate.validate)
+app.command("query")(query.query)
 
 app.add_typer(
     project_app,
@@ -37,4 +48,9 @@ app.add_typer(
 app.add_typer(
     dataset_app,
     name="data",
+)
+
+app.add_typer(
+    metric_app,
+    name="metric",
 )

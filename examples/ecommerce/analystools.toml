@@ -1,0 +1,10 @@
+[project]
+name = "ecommerce"
+version = "0.1.0"
+
+[storage]
+warehouse = ".analystools\warehouse.duckdb"
+metadata = ".analystools\metadata.db"
+
+[output]
+directory = "outputs"

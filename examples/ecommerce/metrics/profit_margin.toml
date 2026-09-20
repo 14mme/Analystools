@@ -1,0 +1,5 @@
+[metric]
+name = "profit_margin"
+description = "Profit divided by revenue"
+expression = "SUM(profit) / NULLIF(SUM(revenue), 0)"
+format = "percentage"

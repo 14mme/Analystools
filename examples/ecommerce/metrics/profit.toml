@@ -1,0 +1,5 @@
+[metric]
+name = "profit"
+description = "Total profit"
+expression = "SUM(profit)"
+format = "currency"
