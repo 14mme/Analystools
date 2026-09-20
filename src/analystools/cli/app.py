@@ -1,6 +1,11 @@
 import typer
 
-from analystools.cli.commands import dataset, project
+from analystools.cli.commands import (
+    dataset, 
+    profile, 
+    project, 
+    validate
+)
 
 app = typer.Typer(
     name="analystools",
@@ -20,6 +25,9 @@ project_app.command("init")(project.init)
 
 dataset_app.command("add")(dataset.add)
 dataset_app.command("list")(dataset.list_command)
+
+app.command("profile")(profile.profile)
+app.command("validate")(validate.validate)
 
 app.add_typer(
     project_app,
