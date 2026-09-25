@@ -28,6 +28,7 @@ metric_app = typer.Typer(
 )
 
 project_app.command("init")(project.init)
+project_app.command("info")(project.info)
 
 dataset_app.command("add")(dataset.add)
 dataset_app.command("list")(dataset.list_command)

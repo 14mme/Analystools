@@ -2,11 +2,15 @@ import tomllib
 from pathlib import Path
 
 from analystools.domain.metric import Metric
+from analystools.application.project_context import (
+    ProjectContext,
+)
 
 
 class MetricRegistry:
-    def __init__(self, metrics_directory: Path) -> None:
-        self.metrics_directory = metrics_directory
+    def __init__(self, context: ProjectContext) -> None:
+        self.context = context
+        self.metrics_directory = context.metrics_directory
 
     def list(self) -> list[Metric]:
         if not self.metrics_directory.exists():

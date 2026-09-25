@@ -6,6 +6,9 @@ from analystools.application.dataset_service import (
     list_datasets,
     register_dataset,
 )
+from analystools.application.project_context import (
+    discover_project,
+)
 from analystools.cli.output import print_success, print_table
 
 
@@ -23,10 +26,10 @@ def add(
         help="Dataset name.",
     ),
 ) -> None:
-    project_root = Path.cwd()
+    context = discover_project()
 
     dataset = register_dataset(
-        project_root=project_root,
+        context=context,
         source=file,
         name=name,
     )
@@ -41,5 +44,6 @@ def add(
 
 
 def list_command() -> None:
-    rows = list_datasets(Path.cwd())
+    context = discover_project()
+    rows = list_datasets(context)
     print_table(rows)

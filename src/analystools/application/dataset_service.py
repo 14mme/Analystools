@@ -11,6 +11,9 @@ from analystools.infrastructure.storage.duckdb import DuckDBStore
 from analystools.infrastructure.storage.parquet import write_parquet
 from analystools.infrastructure.storage.sqlite import MetadataStore
 
+from analystools.application.project_context import (
+    ProjectContext,
+)
 
 def calculate_file_hash(path: Path) -> str:
     digest = hashlib.sha256()
@@ -38,7 +41,7 @@ def load_dataset(path: Path) -> pl.DataFrame:
 
 
 def register_dataset(
-    project_root: Path,
+    context: ProjectContext,
     source: Path,
     name: str,
 ) -> Dataset:
@@ -49,17 +52,12 @@ def register_dataset(
 
     dataframe = load_dataset(source)
 
-    parquet_path = (
-        project_root
-        / "data"
-        / "curated"
-        / f"{name}.parquet"
-    )
+    parquet_path = context.dataset_path(name)
 
     write_parquet(dataframe, parquet_path)
 
     metadata = MetadataStore(
-        project_root / ".analystools" / "metadata.db"
+        context.metadata_path
     )
 
     metadata.initialize()
@@ -100,7 +98,7 @@ def register_dataset(
         )
 
     duckdb_store = DuckDBStore(
-        project_root / ".analystools" / "warehouse.duckdb"
+        context.warehouse_path
     )
 
     duckdb_store.register_parquet(
@@ -111,9 +109,9 @@ def register_dataset(
     return dataset
 
 
-def list_datasets(project_root: Path) -> list[dict]:
+def list_datasets(context: ProjectContext) -> list[dict]:
     metadata = MetadataStore(
-        project_root / ".analystools" / "metadata.db"
+        context.metadata_path
     )
 
     metadata.initialize()

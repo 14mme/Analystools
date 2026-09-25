@@ -3,10 +3,13 @@ from pathlib import Path
 from analystools.infrastructure.storage.duckdb import (
     DuckDBStore,
 )
+from analystools.application.project_context import (
+    ProjectContext,
+)
 
 
 def execute_query(
-    project_root: Path,
+    context: ProjectContext,
     sql_file: Path,
 ) -> tuple[list[str], list[tuple]]:
     if not sql_file.exists():
@@ -24,9 +27,7 @@ def execute_query(
         )
 
     store = DuckDBStore(
-        project_root
-        / ".analystools"
-        / "warehouse.duckdb"
+        context.warehouse_path
     )
 
     return store.query(sql)

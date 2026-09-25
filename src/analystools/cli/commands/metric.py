@@ -8,13 +8,14 @@ from analystools.analytics.metrics.calculator import (
 from analystools.analytics.metrics.registry import (
     MetricRegistry,
 )
+from analystools.application.project_context import (
+    discover_project,
+)
 
 
 def list_metrics() -> None:
-    registry = MetricRegistry(
-        Path.cwd() / "metrics"
-    )
-
+    context = discover_project()
+    registry = MetricRegistry(context)
     metrics = registry.list()
 
     if not metrics:
@@ -39,10 +40,8 @@ def show(
         help="Metric name.",
     ),
 ) -> None:
-    registry = MetricRegistry(
-        Path.cwd() / "metrics"
-    )
-
+    context = discover_project()
+    registry = MetricRegistry(context)
     metric = registry.get(name)
 
     print()
@@ -71,8 +70,10 @@ def calculate(
         help="Column to group by.",
     ),
 ) -> None:
+    context = discover_project()
+    
     columns, rows = calculate_metric(
-        project_root=Path.cwd(),
+        context=context,
         metric_name=name,
         dataset_name=dataset,
         group_by=group_by,

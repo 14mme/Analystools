@@ -5,6 +5,9 @@ import typer
 from analystools.application.profile_service import (
     profile_dataset,
 )
+from analystools.application.project_context import (
+    discover_project,
+)
 
 
 def profile(
@@ -13,8 +16,10 @@ def profile(
         help="Dataset name.",
     ),
 ) -> None:
+    context = discover_project()
+
     result = profile_dataset(
-        project_root=Path.cwd(),
+        context=context,
         dataset_name=dataset,
     )
 

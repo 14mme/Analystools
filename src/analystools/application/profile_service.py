@@ -19,17 +19,17 @@ from analystools.domain.profile import ProfileResult
 from analystools.infrastructure.storage.parquet import (
     read_parquet,
 )
+from analystools.application.project_context import (
+    ProjectContext,
+)
 
 
 def profile_dataset(
-    project_root: Path,
+    context: ProjectContext,
     dataset_name: str,
 ) -> ProfileResult:
-    parquet_path = (
-        project_root
-        / "data"
-        / "curated"
-        / f"{dataset_name}.parquet"
+    parquet_path = context.dataset_path(
+        dataset_name
     )
 
     dataframe = read_parquet(parquet_path)

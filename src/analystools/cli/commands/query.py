@@ -6,6 +6,9 @@ import typer
 from analystools.application.query_service import (
     execute_query,
 )
+from analystools.application.project_context import (
+    discover_project,
+)
 
 
 def query(
@@ -22,8 +25,9 @@ def query(
         help="Optional CSV output file.",
     ),
 ) -> None:
+    context = discover_project()
     columns, rows = execute_query(
-        project_root=Path.cwd(),
+        context=context,
         sql_file=sql_file,
     )
 
