@@ -12,7 +12,6 @@ from analystools.infrastructure.storage.parquet import (
 
 def validate(
     dataset: str = typer.Argument(
-        ...,
         help="Dataset name.",
     ),
 ) -> None:

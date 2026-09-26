@@ -1,11 +1,13 @@
 import typer
 
 from analystools.cli.commands import (
+    analyze,
     dataset, 
     metric,
     profile, 
     project,
-    query, 
+    query,
+    runs,
     validate
 )
 
@@ -40,18 +42,8 @@ metric_app.command("calculate")(metric.calculate)
 app.command("profile")(profile.profile)
 app.command("validate")(validate.validate)
 app.command("query")(query.query)
-
-app.add_typer(
-    project_app,
-    name="project",
-)
-
-app.add_typer(
-    dataset_app,
-    name="data",
-)
-
-app.add_typer(
-    metric_app,
-    name="metric",
-)
+app.command("analyze")(analyze.analyze)
+app.command("runs")(runs.list_runs)
+app.add_typer(project_app, name="project")
+app.add_typer(dataset_app, name="data")
+app.add_typer(metric_app, name="metric")

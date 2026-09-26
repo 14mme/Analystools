@@ -10,7 +10,7 @@ from analystools.application.project_context import (
 
 
 def init(
-    name: str = typer.Argument(..., help="Project name."),
+    name: str = typer.Argument(help="Project name."),
     path: Path = typer.Option(
         Path("."),
         "--path",

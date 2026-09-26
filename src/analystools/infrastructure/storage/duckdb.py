@@ -2,6 +2,8 @@ from pathlib import Path
 
 import duckdb
 
+from analystools.analytics.metrics.sql import quote_identifier
+
 
 class DuckDBStore:
     def __init__(self, path: Path) -> None:
@@ -24,10 +26,12 @@ class DuckDBStore:
                 f"Parquet file not found: {parquet_path}"
             )
 
+        table = quote_identifier(table_name)
+
         with self.connect() as connection:
             connection.execute(
                 f"""
-                CREATE OR REPLACE VIEW "{table_name}"
+                CREATE OR REPLACE VIEW "{table}"
                 AS SELECT *
                 FROM read_parquet(?)
                 """,
@@ -40,6 +44,9 @@ class DuckDBStore:
     ) -> tuple[list[str], list[tuple]]:
         with self.connect() as connection:
             cursor = connection.execute(sql)
+
+            if cursor.description is None:
+                return [], []
 
             columns = [
                 item[0]

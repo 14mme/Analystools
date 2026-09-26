@@ -36,7 +36,6 @@ def list_metrics() -> None:
 
 def show(
     name: str = typer.Argument(
-        ...,
         help="Metric name.",
     ),
 ) -> None:
@@ -54,11 +53,9 @@ def show(
 
 def calculate(
     name: str = typer.Argument(
-        ...,
         help="Metric name.",
     ),
     dataset: str = typer.Option(
-        ...,
         "--dataset",
         "-d",
         help="Dataset name.",

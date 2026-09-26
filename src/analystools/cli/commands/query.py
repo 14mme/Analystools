@@ -13,7 +13,6 @@ from analystools.application.project_context import (
 
 def query(
     sql_file: Path = typer.Argument(
-        ...,
         exists=True,
         readable=True,
         help="SQL file to execute.",

@@ -12,7 +12,6 @@ from analystools.application.project_context import (
 
 def profile(
     dataset: str = typer.Argument(
-        ...,
         help="Dataset name.",
     ),
 ) -> None:

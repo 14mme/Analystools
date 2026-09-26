@@ -14,13 +14,11 @@ from analystools.cli.output import print_success, print_table
 
 def add(
     file: Path = typer.Argument(
-        ...,
         exists=True,
         readable=True,
         help="CSV or Parquet dataset.",
     ),
     name: str = typer.Option(
-        ...,
         "--name",
         "-n",
         help="Dataset name.",
