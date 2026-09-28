@@ -50,6 +50,24 @@ class SQLiteStore:
                 """
             )
 
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS insights (
+                    insight_id TEXT PRIMARY KEY,
+                    evidence_id TEXT NOT NULL,
+                    analysis_name TEXT NOT NULL,
+                    insight_type TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    importance TEXT NOT NULL,
+                    evidence_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    FOREIGN KEY (evidence_id)
+                        REFERENCES evidence(evidence_id)
+                )
+                """
+            )
+
             connection.commit()
 
     def record_run(
@@ -215,6 +233,72 @@ class SQLiteStore:
                     ORDER BY created_at DESC
                     """
                 )
+
+            return cursor.fetchall()
+
+    def record_insight(
+        self,
+        insight_id: str,
+        evidence_id: str,
+        analysis_name: str,
+        insight_type: str,
+        title: str,
+        description: str,
+        importance: str,
+        evidence: list[dict],
+        created_at: str,
+    ) -> None:
+        with self.connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO insights (
+                    insight_id,
+                    evidence_id,
+                    analysis_name,
+                    insight_type,
+                    title,
+                    description,
+                    importance,
+                    evidence_json,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    insight_id,
+                    evidence_id,
+                    analysis_name,
+                    insight_type,
+                    title,
+                    description,
+                    importance,
+                    json.dumps(
+                        evidence,
+                        default=str,
+                    ),
+                    created_at,
+                ),
+            )
+
+            connection.commit()
+
+    def list_insights(self) -> list[sqlite3.Row]:
+        with self.connect() as connection:
+            cursor = connection.execute(
+                """
+                SELECT
+                    insight_id,
+                    evidence_id,
+                    analysis_name,
+                    insight_type,
+                    title,
+                    description,
+                    importance,
+                    created_at
+                FROM insights
+                ORDER BY created_at DESC
+                """
+            )
 
             return cursor.fetchall()
 
