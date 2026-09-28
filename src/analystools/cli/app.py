@@ -2,7 +2,8 @@ import typer
 
 from analystools.cli.commands import (
     analyze,
-    dataset, 
+    dataset,
+    evidence, 
     metric,
     profile, 
     project,
@@ -44,6 +45,9 @@ app.command("validate")(validate.validate)
 app.command("query")(query.query)
 app.command("analyze")(analyze.analyze)
 app.command("runs")(runs.list_runs)
+app.command("evidence-list")(evidence.list_command)
+app.command("evidence-show")(evidence.show)
+
 app.add_typer(project_app, name="project")
 app.add_typer(dataset_app, name="data")
 app.add_typer(metric_app, name="metric")

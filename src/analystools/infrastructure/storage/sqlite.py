@@ -1,5 +1,6 @@
 from pathlib import Path
 import sqlite3
+import json
 
 
 class SQLiteStore:
@@ -27,6 +28,24 @@ class SQLiteStore:
                     execution_time_ms REAL NOT NULL,
                     sql TEXT NOT NULL,
                     created_at TEXT NOT NULL
+                )
+                """
+            )
+
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS evidence (
+                    evidence_id TEXT PRIMARY KEY,
+                    run_id TEXT NOT NULL,
+                    analysis_name TEXT NOT NULL,
+                    dataset TEXT NOT NULL,
+                    dimensions TEXT NOT NULL,
+                    metrics TEXT NOT NULL,
+                    sql TEXT NOT NULL,
+                    values_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    FOREIGN KEY (run_id)
+                        REFERENCES runs(run_id)
                 )
                 """
             )
@@ -88,6 +107,116 @@ class SQLiteStore:
 
             return cursor.fetchall()
 
+    def record_evidence(
+        self,
+        evidence_id: str,
+        run_id: str,
+        analysis_name: str,
+        dataset: str,
+        dimensions: list[str],
+        metrics: list[str],
+        sql: str,
+        values: list[dict],
+        created_at: str,
+    ) -> None:
+        with self.connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO evidence (
+                    evidence_id,
+                    run_id,
+                    analysis_name,
+                    dataset,
+                    dimensions,
+                    metrics,
+                    sql,
+                    values_json,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    evidence_id,
+                    run_id,
+                    analysis_name,
+                    dataset,
+                    json.dumps(dimensions),
+                    json.dumps(metrics),
+                    sql,
+                    json.dumps(
+                        values,
+                        default=str,
+                    ),
+                    created_at,
+                ),
+            )
+
+            connection.commit()
+
+    def get_evidence(
+        self,
+        evidence_id: str,
+    ) -> sqlite3.Row | None:
+        with self.connect() as connection:
+            cursor = connection.execute(
+                """
+                SELECT
+                    evidence_id,
+                    run_id,
+                    analysis_name,
+                    dataset,
+                    dimensions,
+                    metrics,
+                    sql,
+                    values_json,
+                    created_at
+                FROM evidence
+                WHERE evidence_id = ?
+                """,
+                (evidence_id,),
+            )
+
+            return cursor.fetchone()
+
+    def list_evidence(
+        self,
+        analysis_name: str | None = None,
+    ) -> list[sqlite3.Row]:
+        with self.connect() as connection:
+            if analysis_name:
+                cursor = connection.execute(
+                    """
+                    SELECT
+                        evidence_id,
+                        run_id,
+                        analysis_name,
+                        dataset,
+                        dimensions,
+                        metrics,
+                        created_at
+                    FROM evidence
+                    WHERE analysis_name = ?
+                    ORDER BY created_at DESC
+                    """,
+                    (analysis_name,),
+                )
+            else:
+                cursor = connection.execute(
+                    """
+                    SELECT
+                        evidence_id,
+                        run_id,
+                        analysis_name,
+                        dataset,
+                        dimensions,
+                        metrics,
+                        created_at
+                    FROM evidence
+                    ORDER BY created_at DESC
+                    """
+                )
+
+            return cursor.fetchall()
 
 class MetadataStore(SQLiteStore):
     """

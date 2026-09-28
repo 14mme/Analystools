@@ -1,0 +1,15 @@
+analysis:
+  name: revenue_by_category
+
+  dataset: sales
+
+  dimensions:
+    - category
+
+  metrics:
+    - revenue
+    - profit
+
+  order_by:
+    - field: revenue
+      direction: desc

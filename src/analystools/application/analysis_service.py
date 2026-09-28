@@ -21,6 +21,9 @@ from analystools.infrastructure.storage.duckdb import (
 from analystools.infrastructure.storage.sqlite import (
     SQLiteStore
 )
+from analystools.application.evidence_service import (
+    save_evidence
+)
 
 
 def run_analysis(
@@ -91,7 +94,7 @@ def run_analysis(
             created_at=started_at,
         )
 
-        return AnalysisResult(
+        result = AnalysisResult(
             analysis_id=run_id,
             analysis_name=definition.name,
             dataset=definition.dataset,
@@ -102,6 +105,13 @@ def run_analysis(
             sql=sql,
             execution_time_ms=execution_time_ms,
         )
+
+        save_evidence(
+            context=context,
+            result=result,
+        )
+
+        return result
 
     except Exception:
         execution_time_ms = (
